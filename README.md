@@ -39,15 +39,15 @@ cd C:\Users\adira\studio_projects\urbanfix\urbanfix-server
 ### 2. Configure Database Connection
 Edit `src/main/resources/application.properties`:
 ```properties
-spring.datasource.url=jdbc:postgresql://urbanfix-db.cdaymsco6ihx.ap-south-1.rds.amazonaws.com:5432/postgres
+spring.datasource.url=url
 spring.datasource.username=postgres
-spring.datasource.password=I5may2DPqPNuZnq80KIV
+spring.datasource.password=password
 ```
 
 ### 3. Set Gemini API Key
 Update `src/main/resources/application.properties`:
 ```properties
-gemini.api-key=AIzaSyA_VwOY4Bc7e3UOm0i_LBjdsGrkASLkSxY
+gemini.api-key=GEMINI_API_KEY
 ```
 
 ### 4. Build the project
@@ -82,50 +82,6 @@ The server will start on `http://localhost:8000` using the single default profil
 ### Health Check
 - **GET** `/api/health` - Health check endpoint
 
-## Database Schema
-
-### users table
-```sql
-CREATE TABLE users (
-    id BIGSERIAL PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    phone VARCHAR(20) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-### complaints table
-```sql
-CREATE TABLE complaints (
-    id BIGSERIAL PRIMARY KEY,
-    user_id BIGINT NOT NULL REFERENCES users(id),
-    description TEXT NOT NULL,
-    category VARCHAR(100) NOT NULL,
-    department VARCHAR(100) NOT NULL,
-    priority DECIMAL(3,2) NOT NULL,
-    image_path VARCHAR(255),
-    status VARCHAR(50) DEFAULT 'open',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-### notifications table
-```sql
-CREATE TABLE notifications (
-    id BIGSERIAL PRIMARY KEY,
-    user_id BIGINT NOT NULL REFERENCES users(id),
-    complaint_id BIGINT REFERENCES complaints(id),
-    title VARCHAR(255) NOT NULL,
-    message TEXT NOT NULL,
-    read BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-
 ## Auto-Routing with Gemini
 
 The system uses Google's Gemini API to intelligently route complaints to appropriate departments:
@@ -143,17 +99,6 @@ When a complaint is submitted:
 2. AI analyzes and suggests the best department
 3. If Gemini fails, keyword matching fallback is used
 4. Complaint is routed and user is notified
-
-## Environment Variables
-
-Create `.env` file or set system environment variables:
-```
-DATABASE_URL=jdbc:postgresql://host:5432/urbanfix
-DB_USERNAME=postgres
-DB_PASSWORD=your_password
-JWT_SECRET=your-secret-key
-GEMINI_API_KEY=your-gemini-key
-```
 
 ## Development
 
